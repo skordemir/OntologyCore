@@ -1,0 +1,4 @@
+com\anelarge\ontology\IOntologyTransform.class
+com\anelarge\ontology\utils\ObjectProperty.class
+com\anelarge\ontology\OntologyTransform.class
+com\anelarge\ontology\utils\OntologyUtil.class

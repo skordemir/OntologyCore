@@ -1,0 +1,1001 @@
+package com.anelarge.ontology.util;
+
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+
+import org.junit.Test;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+
+import com.anelarge.ontology.utils.ObjectProperty;
+import com.anelarge.ontology.utils.OntologyUtil;
+
+public class OntologyUtilTest {
+
+	@Test
+	public void testInitializeOntologyWithFilePath() throws Exception {
+
+		OntologyUtil util = new OntologyUtil(
+				"src/test/resources/anelargeBSGS.owl");
+		OWLOntology ontology = util.getOntology();
+		if (ontology != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testInitOntologyWithFile() throws Exception {
+		String filePath = "src/test/resources/anelargeBSGS.owl";
+		File f = new File(filePath);
+		OntologyUtil util = new OntologyUtil(f);
+		OWLOntology ontology = util.getOntology();
+		if (ontology != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testInitOntologyWithStream() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLOntology ontology = util.getOntology();
+		if (ontology != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testAddDataProperty() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+		assertTrue(true);
+	}
+
+	@Test
+	public void testGetIndividualByIndividualByName() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLNamedIndividual individual = util.getIndividual("kisi1");
+		if (individual != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testGetIndividualByIndividualByOntologyClassName()
+			throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLNamedIndividual individual = util.getIndividual("Kisi");
+		if (individual != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testGetDataProperty() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLDataProperty dataProperty = util.getDataProperty("adi");
+
+		if (dataProperty != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testGetMultipleDataProperty() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("ad", "sinan", createInvidual);
+		util.addDataProperty("ad", "kordemir", createInvidual);
+
+		HashMap<String, List<String>> dataPropertiesWithList = util
+				.getDataPropertiesWithList(createInvidual);
+		List<String> list = dataPropertiesWithList.get("ad");
+		String ad1 = list.get(0);
+		String ad2 = list.get(1);
+		if ((ad1.equals("sinan") || ad2.equals("sinan"))
+				&& (ad1.equals("kordemir") || ad2.equals("kordemir")))
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testGetDataPropertyByIndividual() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLNamedIndividual individual = util.getIndividual("kisi1");
+		HashMap<String, String> dataProperties = util
+				.getDataProperties(individual);
+
+		String adi = dataProperties.get("adi");
+		String soyadi = dataProperties.get("soyadi");
+
+		if (adi.equals("sinan") && soyadi.equals("kordemir"))
+			assertTrue(true);
+		else
+			assertTrue(false);
+	}
+
+	@Test
+	public void testAddObjectProperty() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLNamedIndividual createInvidual2 = util.createInvidual("Adres",
+				"adres1");
+		util.addDataProperty("il", "ankara", createInvidual2);
+
+		util.addObjectProperty("hasAddress", createInvidual2, createInvidual);
+
+		assertTrue(true);
+
+	}
+
+	@Test
+	public void testGetObjectProperty() throws Exception {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		OWLNamedIndividual createInvidual = util
+				.createInvidual("Kisi", "kisi1");
+		util.addDataProperty("adi", "sinan", createInvidual);
+		util.addDataProperty("soyadi", "kordemir", createInvidual);
+
+		OWLNamedIndividual createInvidual2 = util.createInvidual("Adres",
+				"adres1");
+		util.addDataProperty("il", "ankara", createInvidual2);
+
+		util.addObjectProperty("hasAddress", createInvidual2, createInvidual);
+
+		HashMap<String, List<OWLNamedIndividual>> objectProperties = util
+				.getObjectProperties(createInvidual);
+		List<OWLNamedIndividual> list = objectProperties.get("Adres");
+
+		boolean objectpropertyFound = false;
+		for (OWLNamedIndividual owlNamedIndividual : list) {
+			HashMap<String, String> dataProperties = util
+					.getDataProperties(owlNamedIndividual);
+			String string = dataProperties.get("il");
+			if (string.equals("ankara"))
+				;
+			objectpropertyFound = true;
+		}
+		assertTrue(objectpropertyFound);
+	}
+
+	@Test
+	public void testGetObjectProperties() throws OWLOntologyCreationException,
+			OWLOntologyStorageException {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+
+		List<ObjectProperty> objectProperties = util.getObjectProperties();
+		String domainName = "Node";
+		String rangeName = "Address";
+		String objectPropertyName = "nodeHasAddress";
+		boolean rangeFound = false;
+		boolean domainFound = false;
+		for (ObjectProperty objectProperty : objectProperties) {
+
+			if (objectProperty.name.equals(objectPropertyName)) {
+				List<String> domains = objectProperty.getDomains();
+				for (String string : domains) {
+					if (string.equals(domainName))
+						domainFound = true;
+				}
+
+				List<String> ranges = objectProperty.getRanges();
+				for (String string : ranges) {
+
+					if (string.equals(rangeName))
+						rangeFound = true;
+
+				}
+			}
+		}
+
+		if (domainFound && rangeFound)
+			assertTrue(true);
+		else
+			assertTrue(false);
+
+	}
+
+	@Test
+	public void testPrintOntology() throws OWLOntologyCreationException,
+			OWLOntologyStorageException {
+		ByteArrayInputStream stream = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(stream);
+		util.printOntology();
+		assertTrue(true);
+	}
+
+	@Test
+	public void testSaveOntology() throws OWLOntologyCreationException,
+			OWLOntologyStorageException {
+		ByteArrayInputStream bytInput1 = new ByteArrayInputStream(
+				ontologyXml.getBytes());
+		OntologyUtil util = new OntologyUtil(bytInput1);
+
+		OutputStream stream2 = new ByteArrayOutputStream();
+
+		util.saveOntology(stream2);
+
+		ByteArrayInputStream bytInput2 = new ByteArrayInputStream(stream2
+				.toString().getBytes());
+
+		OntologyUtil util2 = new OntologyUtil(bytInput2);
+
+		OWLOntology ontology = util2.getOntology();
+
+		if (ontology != null)
+			assertTrue(true);
+		else
+			assertTrue(false);
+
+	}
+
+	static String ontologyXml = "<?xml version=\"1.0\"?>\r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "<!DOCTYPE rdf:RDF [\r\n"
+			+ "    <!ENTITY owl \"http://www.w3.org/2002/07/owl#\" >\r\n"
+			+ "    <!ENTITY swrl \"http://www.w3.org/2003/11/swrl#\" >\r\n"
+			+ "    <!ENTITY swrlb \"http://www.w3.org/2003/11/swrlb#\" >\r\n"
+			+ "    <!ENTITY xsd \"http://www.w3.org/2001/XMLSchema#\" >\r\n"
+			+ "    <!ENTITY rdfs \"http://www.w3.org/2000/01/rdf-schema#\" >\r\n"
+			+ "    <!ENTITY rdf \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" >\r\n"
+			+ "    <!ENTITY protege \"http://protege.stanford.edu/plugins/owl/protege#\" >\r\n"
+			+ "    <!ENTITY xsp \"http://www.owl-ontologies.com/2005/08/07/xsp.owl#\" >\r\n"
+			+ "    <!ENTITY anelargeBSGS \"http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#\" >\r\n"
+			+ "]>\r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "<rdf:RDF xmlns=\"http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#\"\r\n"
+			+ "     xml:base=\"http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl\"\r\n"
+			+ "     xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\r\n"
+			+ "     xmlns:swrl=\"http://www.w3.org/2003/11/swrl#\"\r\n"
+			+ "     xmlns:protege=\"http://protege.stanford.edu/plugins/owl/protege#\"\r\n"
+			+ "     xmlns:xsp=\"http://www.owl-ontologies.com/2005/08/07/xsp.owl#\"\r\n"
+			+ "     xmlns:owl=\"http://www.w3.org/2002/07/owl#\"\r\n"
+			+ "     xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"\r\n"
+			+ "     xmlns:swrlb=\"http://www.w3.org/2003/11/swrlb#\"\r\n"
+			+ "     xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\r\n"
+			+ "     xmlns:anelargeBSGS=\"http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#\">\r\n"
+			+ "    <owl:Ontology rdf:about=\"http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- \r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "    //\r\n"
+			+ "    // Datatypes\r\n"
+			+ "    //\r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "     -->\r\n"
+			+ "\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- \r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "    //\r\n"
+			+ "    // Object Properties\r\n"
+			+ "    //\r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "     -->\r\n"
+			+ "\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#deviceHasSubnet -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;deviceHasSubnet\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Subnet\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#networkhasRouters -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;networkhasRouters\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Network\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Router\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasAddress -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasAddress\">\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Address\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasOs -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasOs\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasPort -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasPort\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasSoftware -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasSoftware\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasTrace -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasTrace\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasType -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasType\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;NodeType\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeHasVulnerability -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;nodeHasVulnerability\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#portHasConfiguration -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;portHasConfiguration\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;PortCfg\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#portHasVulnerability -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;portHasVulnerability\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#routerhasDevices -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;routerhasDevices\">\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Router\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#runService -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;runService\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#siteHasNodes -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;siteHasNodes\">\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#subnetHasSite -->\r\n"
+			+ "\r\n"
+			+ "    <owl:ObjectProperty rdf:about=\"&anelargeBSGS;subnetHasSite\">\r\n"
+			+ "        <rdfs:range rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Subnet\"/>\r\n"
+			+ "    </owl:ObjectProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- \r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "    //\r\n"
+			+ "    // Data properties\r\n"
+			+ "    //\r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "     -->\r\n"
+			+ "\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#address -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;address\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Address\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#addressType -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;addressType\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Address\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#architecture -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;architecture\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#certainity -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;certainity\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#cfgName -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;cfgName\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;PortCfg\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#cfgValue -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;cfgValue\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;PortCfg\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#deviceDescription -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;deviceDescription\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#deviceIp -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;deviceIp\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#deviceType -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;deviceType\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#endIp -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;endIp\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Subnet\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#family -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;family\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#hopHOST -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;hopHOST\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#hopIP -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;hopIP\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#hopRTT -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;hopRTT\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#hopTTL -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;hopTTL\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#nodeName -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;nodeName\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#orgUnitID -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;orgUnitID\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Network\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#orgUnitName -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;orgUnitName\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Network\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#osDescription -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;osDescription\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#portNumber -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;portNumber\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;int\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#portProtocol -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;portProtocol\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#portState -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;portState\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#product -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;product\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#proof -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;proof\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#routerDescription -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;routerDescription\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Router\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#routerIp -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;routerIp\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Router\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#scanType -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;scanType\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#serviceMethod -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;serviceMethod\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#serviceName -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;serviceName\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#siteID -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;siteID\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#siteName -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;siteName\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#startIp -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;startIp\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Subnet\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#status -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;status\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#tracePort -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;tracePort\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#traceProtocol -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;traceProtocol\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#type -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;type\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;NodeType\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#uptime -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;uptime\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#vendor -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;vendor\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Address\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#version -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;version\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#vulnerabilityKey -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;vulnerabilityKey\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#vulnerabilityReference -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;vulnerabilityReference\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#vulnerabilityStatus -->\r\n"
+			+ "\r\n"
+			+ "    <owl:DatatypeProperty rdf:about=\"&anelargeBSGS;vulnerabilityStatus\">\r\n"
+			+ "        <rdfs:domain rdf:resource=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "        <rdfs:range rdf:resource=\"&xsd;string\"/>\r\n"
+			+ "    </owl:DatatypeProperty>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- \r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "    //\r\n"
+			+ "    // Classes\r\n"
+			+ "    //\r\n"
+			+ "    ///////////////////////////////////////////////////////////////////////////////////////\r\n"
+			+ "     -->\r\n"
+			+ "\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Address -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Address\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Device -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Device\">\r\n"
+			+ "        <rdfs:subClassOf rdf:resource=\"&owl;Thing\"/>\r\n"
+			+ "    </owl:Class>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#LogSystem -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;LogSystem\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Network -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Network\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Node -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Node\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#NodeType -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;NodeType\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#OS -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;OS\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Port -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Port\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#PortCfg -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;PortCfg\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Router -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Router\">\r\n"
+			+ "        <rdfs:subClassOf rdf:resource=\"&anelargeBSGS;Device\"/>\r\n"
+			+ "    </owl:Class>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Service -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Service\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Site -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Site\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Software -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Software\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Subnet -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Subnet\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Trace -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Trace\"/>\r\n"
+			+ "    \r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "    <!-- http://www.semanticweb.org/ontologies/2013/1/anelargeBSGS.owl#Vulnerability -->\r\n"
+			+ "\r\n"
+			+ "    <owl:Class rdf:about=\"&anelargeBSGS;Vulnerability\"/>\r\n"
+			+ "</rdf:RDF>\r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "<!-- Generated by the OWL API (version 3.2.3.1824) http://owlapi.sourceforge.net -->\r\n"
+			+ "\r\n" + "";
+
+}
